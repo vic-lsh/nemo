@@ -1,0 +1,173 @@
+diff --git a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb.sv b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb.sv
+index fed57a2..320c889 100644
+--- a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb.sv
++++ b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb.sv
+@@ -2,7 +2,6 @@
+ 
+ import mc_axi_if_pkg::t_to_mc_axi4;
+ import mc_axi_if_pkg::t_from_mc_axi4;
+-//import cxl_if_counter_pkg::track_mode_t;
+ 
+ module afu_top_tb ();
+ 
+@@ -48,79 +47,7 @@ typedef enum logic[7:0] {
+ state_t state_reg = IDLE;
+ state_t state_next;
+ 
+-state_t tb_sequence[19];
+-assign tb_sequence[0] = SEND_TELEM_WRITE;
+-assign tb_sequence[1] = SEND_TELEM_WRITE;
+-assign tb_sequence[2] = SEND_TELEM_WRITE;
+-assign tb_sequence[3] = SEND_TELEM_WRITE;
+-assign tb_sequence[4] = SEND_TELEM_READ;
+-assign tb_sequence[5] = SEND_TELEM_READ;
+-assign tb_sequence[6] = SEND_TELEM_READ;
+-assign tb_sequence[7] = SEND_TELEM_READ;
+-assign tb_sequence[8] = SEND_TELEM_READ;
+-assign tb_sequence[9] = SEND_TELEM_READ;
+-assign tb_sequence[10] = SEND_TELEM_READ;
+-assign tb_sequence[11] = SEND_WRITE;
+-assign tb_sequence[12] = SEND_WRITE;
+-assign tb_sequence[13] = SEND_READ;
+-assign tb_sequence[14] = STALL;
+-assign tb_sequence[15] = SEND_TELEM_READ;
+-assign tb_sequence[16] = SEND_TELEM_READ;
+-assign tb_sequence[17] = SEND_TELEM_READ;
+-assign tb_sequence[18] = STOP;
+-
+-logic [63:0]stall_amounts[1];
+-assign stall_amounts[0] = 64'd1000;
+-
+-logic [mc_axi_if_pkg::MC_AXI_WAC_ADDR_BW-1:0] tb_write_addrs[2];
+-logic [mc_axi_if_pkg::MC_AXI_WDC_DATA_BW-1:0] tb_write_datas[2];
+-assign tb_write_addrs[0] = 32'h0000_0100;
+-assign tb_write_datas[0] = 'hdeadb33f;
+-assign tb_write_addrs[1] = 32'h0000_0240;
+-assign tb_write_datas[1] = 'hdeadb34f;
+-
+-logic [mc_axi_if_pkg::MC_AXI_RAC_ADDR_BW-1:0] tb_read_addrs[1];
+-logic [mc_axi_if_pkg::MC_AXI_RRC_DATA_BW-1:0] tb_read_datas_good[1];
+-assign tb_read_addrs[0] = tb_write_addrs[0];
+-assign tb_read_datas_good[0] = tb_write_datas[0];
+-
+-logic [31:0] tb_telem_write_addrs[4];
+-logic [63:0] tb_telem_write_datas[4];
+-assign tb_telem_write_addrs[0] = 32'b10_0000_0000_0000_1000; // filter_start
+-assign tb_telem_write_datas[0] = 64'h0000_0100;
+-assign tb_telem_write_addrs[1] = 32'b10_0000_0000_0001_0000; // filter_end
+-assign tb_telem_write_datas[1] = 64'h0000_0300;
+-assign tb_telem_write_addrs[2] = 32'b10_0000_0000_0001_1000; // map_norm_shift
+-assign tb_telem_write_datas[2] = 64'd5; // turn 0x100 into 0x8, 0x200 into 0x16
+-assign tb_telem_write_addrs[3] = 32'b10_0000_0000_0000_0000; // added_stall
+-assign tb_telem_write_datas[3] = 64'd100;
+-
+-logic [31:0] tb_telem_read_addrs[10];
+-logic [63:0] tb_telem_read_datas_good[10];
+-assign tb_telem_read_addrs[0] = tb_telem_write_addrs[0];
+-assign tb_telem_read_datas_good[0] = tb_telem_write_datas[0];
+-assign tb_telem_read_addrs[1] = tb_telem_write_addrs[1];
+-assign tb_telem_read_datas_good[1] = tb_telem_write_datas[1];
+-assign tb_telem_read_addrs[2] = tb_telem_write_addrs[2];
+-assign tb_telem_read_datas_good[2] = tb_telem_write_datas[2];
+-assign tb_telem_read_addrs[3] = tb_telem_write_addrs[3];
+-assign tb_telem_read_datas_good[3] = tb_telem_write_datas[3];
+-assign tb_telem_read_addrs[4] = 32'b10_0000_0000_0010_0000;
+-assign tb_telem_read_datas_good[4] = {{60{1'b1}}, 4'b0000};
+-
+-// clear counters
+-assign tb_telem_read_addrs[5] = 32'h0;
+-assign tb_telem_read_datas_good[5] = {64'hx};
+-assign tb_telem_read_addrs[6] = 32'h10008;
+-assign tb_telem_read_datas_good[6] = {64'hx};
+-// check counters
+-assign tb_telem_read_addrs[7] = 32'h0;
+-assign tb_telem_read_datas_good[7] = {64'h2};
+-assign tb_telem_read_addrs[8] = 32'h10008;
+-assign tb_telem_read_datas_good[8] = {64'h1};
+-assign tb_telem_read_addrs[9] = 32'h16;
+-assign tb_telem_read_datas_good[9] = 64'hx;
+-
++`include "afu_top_tb_controlflow_generated.sv"
+ 
+ 
+ logic [mc_axi_if_pkg::MC_AXI_WAC_ADDR_BW-1:0] write_req_addr;
+@@ -157,12 +84,15 @@ logic [31:0] tb_sequence_i;
+ logic [31:0] tb_stall_i;
+ logic [31:0] tb_write_req_i;
+ logic [31:0] tb_read_req_i;
++logic [31:0] tb_read_resp_i;
+ logic [31:0] tb_telem_write_req_i;
+ logic [31:0] tb_telem_read_req_i;
+ 
+ logic [63:0] stall_cntr;
+ logic [63:0] stall_cntr_next;
+ 
++logic [63:0] num_outstanding_reads;
++
+ always @(posedge clk) begin
+   if (rst) begin
+     state_reg <= IDLE_4;
+@@ -170,7 +100,9 @@ always @(posedge clk) begin
+     tb_stall_i <= 0;
+     tb_write_req_i <= 0;
+     tb_read_req_i <= 0;
++    tb_read_resp_i <= 0;
+     stall_cntr <= 0;
++    num_outstanding_reads <= 0;
+   end else begin
+     if (state_reg == IDLE || state_reg == IDLE_2 || state_reg == SEND_WRITE || state_reg == WAIT_WRITE_OK || state_reg == SEND_READ || state_reg == WAIT_READ_OK || state_reg == STALL) begin
+       state_reg <= state_next;
+@@ -192,12 +124,20 @@ always @(posedge clk) begin
+       if (!write_resp_ok) $fatal(1, "invalid write resp.");
+       tb_write_req_i <= tb_write_req_i + 1;
+     end
+-    if (read_req_valid && read_req_ready) $display("[tb] reading mem[%h]", read_req_addr);
++    if (read_req_valid && read_req_ready) begin
++      $display("[tb] reading mem[%h]", read_req_addr);
++      num_outstanding_reads <= num_outstanding_reads + 1;
++      tb_read_req_i <= tb_read_req_i + 1;
++      if (state_next != WAIT_READ_OK) begin
++          tb_sequence_i <= tb_sequence_i + 1;
++      end
++    end
+     if (read_resp_valid && read_resp_ready) begin
+       $display("[tb] read done: %h", read_resp_data);
+       if (!read_resp_ok) $fatal(1, "invalid read resp.");
+-      if (read_resp_data !== tb_read_datas_good[tb_read_req_i]) $fatal(1, "Read resp does not match expected (%h)", tb_read_datas_good[tb_read_req_i]);
+-      tb_read_req_i <= tb_read_req_i + 1;
++      if (read_resp_data !== tb_read_datas_good[tb_read_resp_i]) $fatal(1, "Read resp does not match expected (%h)", tb_read_datas_good[tb_read_resp_i]);
++      tb_read_resp_i <= tb_read_resp_i + 1;
++      num_outstanding_reads <= num_outstanding_reads - 1;
+     end
+   end
+ end
+@@ -258,7 +198,10 @@ always_comb begin
+     IDLE: begin
+       if (!rst) begin
+         state_next = tb_sequence[tb_sequence_i];
+-        if (state_next == STALL) stall_cntr_next = stall_amounts[tb_stall_i];
++        if (state_next == STALL) begin
++            $display("[tb] Begin stall %d\n", stall_amounts[tb_stall_i]);
++            stall_cntr_next = stall_amounts[tb_stall_i];
++        end
+       end
+     end
+     IDLE_2: begin
+@@ -283,11 +226,15 @@ always_comb begin
+     SEND_READ: begin
+       read_req_addr = tb_read_addrs[tb_read_req_i];
+       read_req_valid = 1;
+-      if (read_req_valid && read_req_ready) state_next = WAIT_READ_OK;
++      if (read_req_valid && read_req_ready) begin
++        if (!tb_read_pipeline[tb_read_req_i]) begin
++          state_next = WAIT_READ_OK;
++        end
++      end
+     end
+     WAIT_READ_OK: begin
+       read_resp_ready = 1;
+-      if (read_resp_ready && read_resp_valid) state_next = IDLE;
++      if (read_resp_ready && read_resp_valid && num_outstanding_reads == 1) state_next = IDLE;
+     end
+ 
+     SEND_TELEM_WRITE: begin

@@ -1,0 +1,35 @@
+name: Unit Test
+
+on:
+  workflow_call:
+    inputs:
+      build_artifact:
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: vicsli/cxltm-host-img:1
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-tar-artifact
+
+    - name: Extract build artifacts
+      run: tar -xzvf build-artifact.tar.gz
+
+    - name: Register accel-config library path
+      run: |
+        echo "/usr/lib64" | tee -a /etc/ld.so.conf
+        ldconfig -v
+
+    - name: Run unit tests
+      run: |
+        ./scripts/run_unit_tests.sh

@@ -1,0 +1,13 @@
+diff --git a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/axi_slave_example.sv b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/axi_slave_example.sv
+index 7f2749d1..ccfa2a0d 100644
+--- a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/axi_slave_example.sv
++++ b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/axi_slave_example.sv
+@@ -4,7 +4,7 @@ import mc_axi_if_pkg::t_to_mc_axi4;
+ import mc_axi_if_pkg::t_from_mc_axi4;
+ 
+ module axi_slave_example #(
+-  parameter MEM_TOP_ADDR = 1024
++  parameter MEM_TOP_ADDR = 2048
+ ) (
+   input clk,
+   input rst,

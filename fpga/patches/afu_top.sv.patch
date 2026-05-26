@@ -1,0 +1,125 @@
+diff --git a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/common/afu/afu_top.sv b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/common/afu/afu_top.sv
+index 595faf5..c7678ca 100644
+--- a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/common/afu/afu_top.sv
++++ b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/common/afu/afu_top.sv
+@@ -122,6 +122,10 @@ afu_axi_if_pkg::t_axi4_wr_data_ready  [MC_CHANNEL-1:0]  iafu2cxlip_axi_wready;
+ afu_axi_if_pkg::t_axi4_wr_resp_ch     [MC_CHANNEL-1:0]  iafu2cxlip_axi_b;
+ afu_axi_if_pkg::t_axi4_wr_resp_ready  [MC_CHANNEL-1:0]  cxlip2iafu_axi_bready;
+ 
++afu_axi_if_pkg::t_axi4_rd_addr_ch     [MC_CHANNEL-1:0]  iafu2mc_axi_ar_bugfix_me;
++afu_axi_if_pkg::t_axi4_rd_addr_ready  [MC_CHANNEL-1:0]  mc2iafu_axi_arready_bugfix_me;
++afu_axi_if_pkg::t_axi4_rd_resp_ch     [MC_CHANNEL-1:0]  mc2iafu_axi_r_bugfix_me;
++afu_axi_if_pkg::t_axi4_rd_resp_ready  [MC_CHANNEL-1:0]  iafu2mc_axi_rready_bugfix_me;
+ 
+ afu_axi_if_pkg::t_axi4_rd_addr_ch     [MC_CHANNEL-1:0]  iafu2mc_axi_ar;
+ afu_axi_if_pkg::t_axi4_rd_addr_ready  [MC_CHANNEL-1:0]  mc2iafu_axi_arready;
+@@ -135,6 +139,11 @@ afu_axi_if_pkg::t_axi4_wr_data_ready  [MC_CHANNEL-1:0]  mc2iafu_axi_wready;
+ afu_axi_if_pkg::t_axi4_wr_resp_ch     [MC_CHANNEL-1:0]  mc2iafu_axi_b;
+ afu_axi_if_pkg::t_axi4_wr_resp_ready  [MC_CHANNEL-1:0]  iafu2mc_axi_bready;
+ 
++mc_axi_if_pkg::t_to_mc_axi4 [MC_CHANNEL-1:0] cxlip2iafu_to_mc_axi4_in_bugfix_me;
++mc_axi_if_pkg::t_from_mc_axi4 [MC_CHANNEL-1:0] iafu2cxlip_from_mc_axi4_out_bugfix_me;
++mc_axi_if_pkg::t_to_mc_axi4 [MC_CHANNEL-1:0] iafu2mc_to_mc_axi4_out_bugfix_me;
++mc_axi_if_pkg::t_from_mc_axi4 [MC_CHANNEL-1:0] mc2iafu_from_mc_axi4_in_bugfix_me;
++
+ generate
+ for (genvar channel = 0; channel < MC_CHANNEL; channel++) begin: per_chan
+ 
+@@ -142,8 +151,8 @@ for (genvar channel = 0; channel < MC_CHANNEL; channel++) begin: per_chan
+     //  .clk(afu_clk)
+     // ,.rst(!afu_rstn)
+     // ,.cxlip2iafu_to_mc_axi4_in  (cxlip2iafu_to_mc_axi4_in[channel])
+-    .cxlip2iafu_to_mc_axi4_in  (cxlip2iafu_to_mc_axi4_in[channel])
+-    ,.iafu2cxlip_from_mc_axi4_out (iafu2cxlip_from_mc_axi4_out[channel])
++    .cxlip2iafu_to_mc_axi4_in  (cxlip2iafu_to_mc_axi4_in_bugfix_me[channel])
++    ,.iafu2cxlip_from_mc_axi4_out (iafu2cxlip_from_mc_axi4_out_bugfix_me[channel])
+     ,.cxlip2iafu_axi_ar (cxlip2iafu_axi_ar[channel])
+     ,.iafu2cxlip_axi_arready  (iafu2cxlip_axi_arready[channel])
+     ,.iafu2cxlip_axi_r  (iafu2cxlip_axi_r[channel])
+@@ -157,8 +166,8 @@ for (genvar channel = 0; channel < MC_CHANNEL; channel++) begin: per_chan
+   );
+ 
+   nemo_nemo_to_mc_axi from_nemo (
+-     .iafu2mc_to_mc_axi4_out  (iafu2mc_to_mc_axi4_out[channel])
+-    ,.mc2iafu_from_mc_axi4_in (mc2iafu_from_mc_axi4_in[channel])
++     .iafu2mc_to_mc_axi4_out  (iafu2mc_to_mc_axi4_out_bugfix_me[channel])
++    ,.mc2iafu_from_mc_axi4_in (mc2iafu_from_mc_axi4_in_bugfix_me[channel])
+ 
+     ,.iafu2mc_axi_ar  (iafu2mc_axi_ar[channel])
+     ,.mc2iafu_axi_arready (mc2iafu_axi_arready[channel])
+@@ -172,20 +181,53 @@ for (genvar channel = 0; channel < MC_CHANNEL; channel++) begin: per_chan
+     ,.mc2iafu_axi_b (mc2iafu_axi_b[channel])
+     ,.iafu2mc_axi_bready  (iafu2mc_axi_bready[channel])
+   );
++
++  nemo_bugfix_rready bugfix_the_ar_rready (
++     .clk                   (afu_clk)
++    ,.rst                   (~afu_rstn)
++
++    ,.s_in_axi_ar           (iafu2mc_axi_ar_bugfix_me[channel])
++    ,.s_out_axi_arready     (mc2iafu_axi_arready_bugfix_me[channel])
++    ,.s_out_axi_r           (mc2iafu_axi_r_bugfix_me[channel])
++    ,.s_in_axi_rready       (iafu2mc_axi_rready_bugfix_me[channel])
++
++    ,.m_out_axi_ar          (iafu2mc_axi_ar[channel])
++    ,.m_in_axi_arready      (mc2iafu_axi_arready[channel])
++    ,.m_in_axi_r            (mc2iafu_axi_r[channel])
++    ,.m_out_axi_rready      (iafu2mc_axi_rready[channel])
++  );
++
++  nemo_bugfix_req bugfix_inst_req (
++     .clk(afu_clk)
++    ,.rst(~afu_rstn)
++
++    ,.iafu2mc_to_mc_axi4_in_bugfix_me  (iafu2mc_to_mc_axi4_out_bugfix_me[channel])
++    ,.mc2iafu_from_mc_axi4_out_bugfix_me (mc2iafu_from_mc_axi4_in_bugfix_me[channel])
++
++    ,.iafu2mc_to_mc_axi4_out  (iafu2mc_to_mc_axi4_out[channel])
++    ,.mc2iafu_from_mc_axi4_in (mc2iafu_from_mc_axi4_in[channel])
++  );
++  nemo_bugfix_resp bugfix_inst_resp (
++     .cxlip2iafu_to_mc_axi4_in    (cxlip2iafu_to_mc_axi4_in[channel])
++    ,.iafu2cxlip_from_mc_axi4_out (iafu2cxlip_from_mc_axi4_out[channel])
++
++    ,.cxlip2iafu_to_mc_axi4_out_bugfix_me   (cxlip2iafu_to_mc_axi4_in_bugfix_me[channel])
++    ,.iafu2cxlip_from_mc_axi4_in_bugfix_me  (iafu2cxlip_from_mc_axi4_out_bugfix_me[channel])
++  );
+ end
+ endgenerate
+ 
+-nemo_top_csrctrl nemo_top_inst (
++nemo_top nemo_top_inst (
+      .clk (afu_clk)
+     ,.rst (~afu_rstn)
+ 
+-    ,.controlpath_req (controlpath_req)
+-    ,.controlpath_req_valid (controlpath_req_valid)
+-    ,.controlpath_req_ready (controlpath_req_ready)
++    ,.controlpath_mmio_req (controlpath_req)
++    ,.controlpath_mmio_req_valid (controlpath_req_valid)
++    ,.controlpath_mmio_req_ready (controlpath_req_ready)
+ 
+-    ,.controlpath_resp  (controlpath_resp)
+-    ,.controlpath_resp_valid  (controlpath_resp_valid)
+-    ,.controlpath_resp_ready  (controlpath_resp_ready)
++    ,.controlpath_mmio_resp  (controlpath_resp)
++    ,.controlpath_mmio_resp_valid  (controlpath_resp_valid)
++    ,.controlpath_mmio_resp_ready  (controlpath_resp_ready)
+     
+     // AXI between CXL IP and this module
+     ,.cxlip2iafu_axi_ar (cxlip2iafu_axi_ar)
+@@ -201,10 +243,10 @@ nemo_top_csrctrl nemo_top_inst (
+     ,.cxlip2iafu_axi_bready (cxlip2iafu_axi_bready)
+ 
+     // AXI between this module and MC (DRAM)
+-    ,.iafu2mc_axi_ar  (iafu2mc_axi_ar)
+-    ,.mc2iafu_axi_arready (mc2iafu_axi_arready)
+-    ,.mc2iafu_axi_r (mc2iafu_axi_r)
+-    ,.iafu2mc_axi_rready  (iafu2mc_axi_rready)
++    ,.iafu2mc_axi_ar  (iafu2mc_axi_ar_bugfix_me)
++    ,.mc2iafu_axi_arready (mc2iafu_axi_arready_bugfix_me)
++    ,.mc2iafu_axi_r (mc2iafu_axi_r_bugfix_me)
++    ,.iafu2mc_axi_rready  (iafu2mc_axi_rready_bugfix_me)
+    
+     ,.iafu2mc_axi_aw  (iafu2mc_axi_aw)
+     ,.mc2iafu_axi_awready (mc2iafu_axi_awready)

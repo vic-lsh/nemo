@@ -1,0 +1,29 @@
+name: sw_ci
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - 'CMakeLists.txt'
+      - 'bench/**'
+      - 'fpga_ctl/**'
+      - 'libs/**'
+      - 'src/**'
+      - 'tests/**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/sw_build.yml
+
+  test:
+    needs: build
+    uses: ./.github/workflows/sw_unit_test.yml
+    with:
+      build_artifact: ${{ needs.build.outputs.build_artifact }}
+
+  format:
+    uses: ./.github/workflows/sw_format.yml

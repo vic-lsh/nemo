@@ -1,0 +1,46 @@
+name: Build FPGA Design
+on:
+  push:
+    branches:
+      - 'build/**'
+    paths:
+      - 'intel_rtile_cxl_top/**'
+      - 'intel_rtile_cxl_top_0_ed/**'
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build project as a .sof file
+      run: |
+        ./scripts/build.sh
+
+    - name: Convert .sof to .pof
+      run: |
+        ./scripts/sof_to_pof.sh
+
+    - name: Save build output
+      run: |
+        sof_out=cxltyp3_memexp_ddr4_top.sof
+        sof_out_path=./intel_rtile_cxl_top_0_ed/hardware_test_design/output_files/$sof_out
+        if [ ! -e $sof_out_path ]; then
+            echo "Failed to find .sof file."
+            exit 1
+        fi
+
+        pof_out=output_file.pof
+        pof_out_path=./intel_rtile_cxl_top_0_ed/hardware_test_design/$pof_out
+        if [ ! -e $pof_out_path ]; then
+            echo "Failed to find .pof file."
+            exit 1
+        fi
+
+        timestamp=$(date +'%y%m%d%H%M%S')
+        dir_name="${timestamp}_${GITHUB_SHA}"
+        mkdir -p /mnt/sda1/cxl_build_output/$dir_name
+        mv $sof_out_path /mnt/sda1/cxl_build_output/$dir_name/$sof_out
+        mv $pof_out_path /mnt/sda1/cxl_build_output/$dir_name/$pof_out
+        echo "Written to /mnt/sda1/cxl_build_output/$dir_name"

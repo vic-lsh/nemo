@@ -1,0 +1,1 @@
+cmd_/mnt/sda1/projs/memtest/memmod/Module.symvers := sed 's/\.ko$$/\.o/' /mnt/sda1/projs/memtest/memmod/modules.order | scripts/mod/modpost -m -a  -o /mnt/sda1/projs/memtest/memmod/Module.symvers -e -i Module.symvers   -T -

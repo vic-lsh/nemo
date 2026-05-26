@@ -1,0 +1,58 @@
+name: SW Build
+
+on:
+  workflow_call:
+    outputs:
+      build_artifact:
+        description: "The artifact containing the build output"
+        value: ${{ jobs.build.outputs.build_artifact }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: vicsli/cxltm-host-img:1
+    outputs:
+      build_artifact: build-output
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Initialize submodules
+      run: |
+        git config --global --add safe.directory '*'
+        git submodule update --init 3rd_party/unity
+
+    - name: Configure CMake
+      run: |
+        cd build
+        cmake ..
+      working-directory: .
+
+    - name: Build project
+      run: |
+        cd build
+        make -j$(nproc)
+      working-directory: .
+
+    - name: Register accel-config library path
+      run: |
+        echo "/usr/lib64" | tee -a /etc/ld.so.conf
+        ldconfig -v
+
+    - name: Run unit tests
+      run: |
+        ls 
+        ls scripts
+        ./scripts/run_unit_tests.sh
+      working-directory: .
+
+    - name: Archive build artifacts
+      run: tar -czvf build-artifact.tar.gz build/
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-tar-artifact
+        path: build-artifact.tar.gz

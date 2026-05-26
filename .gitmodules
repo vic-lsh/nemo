@@ -1,0 +1,47 @@
+[submodule "apps/silo"]
+	path = apps/silo
+	url = https://ajaustin@bitbucket.org/ajaustin/silo.git
+[submodule "Hoard"]
+	path = 3rd_party/Hoard
+	url = https://github.com/emeryberger/Hoard.git
+[submodule "apps/llama.cpp"]
+	path = apps/llama.cpp
+	url = https://github.com/ggerganov/llama.cpp.git
+[submodule "3rd_party/unity"]
+	path = 3rd_party/unity
+	url = https://github.com/ThrowTheSwitch/Unity
+[submodule "apps/ycsb"]
+	path = apps/ycsb
+	url = https://github.com/brianfrankcooper/YCSB.git
+[submodule "apps/faster"]
+	path = apps/faster
+	url = https://github.com/vic-lsh/FASTER.git
+	branch = ctm-bench
+[submodule "apps/hibench"]
+	path = apps/hibench
+	url = https://github.com/Intel-bigdata/HiBench.git
+[submodule "apps/pg-tpch"]
+	path = apps/pg-tpch
+	url = https://github.com/vic-lsh/pg-tpch.git
+[submodule "apps/voltdb"]
+	path = apps/voltdb
+	url = https://github.com/vic-lsh/voltdb.git
+[submodule "apps/gapbs"]
+	path = apps/gapbs
+	url = https://github.com/vic-lsh/gapbs.git
+[submodule "3rd_party/idxd-config"]
+	path = 3rd_party/idxd-config
+	url = https://github.com/intel/idxd-config.git
+[submodule "3rd_party/syscall_intercept"]
+	path = 3rd_party/syscall_intercept
+	url = https://github.com/pmem/syscall_intercept.git
+[submodule "linux"]
+	path = platform/linux
+	url = https://github.com/vic-lsh/linux.git
+[submodule "platform/qemu"]
+	path = platform/qemu
+	url = https://github.com/vic-lsh/qemu.git
+	branch = nemo
+[submodule "platform/docker/runc"]
+	path = platform/docker/runc
+	url = https://github.com/vic-lsh/runc.git

@@ -1,0 +1,21 @@
+name: FPGA CI Checks
+
+on:
+  push:
+    branches-ignore:
+      - 'build/**'
+    paths:
+      - 'intel_rtile_cxl_top/**'
+      - 'intel_rtile_cxl_top_0_ed/**'
+
+jobs:
+  check-syntax:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Check syntax
+      run: |
+        ./scripts/check_syntax.sh

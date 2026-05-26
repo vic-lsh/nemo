@@ -1,0 +1,1 @@
+cmd_/mnt/sda1/projs/memtest/memmod/memtest_module.ko := ld -r -m elf_x86_64 --build-id=sha1  -T scripts/module.lds -o /mnt/sda1/projs/memtest/memmod/memtest_module.ko /mnt/sda1/projs/memtest/memmod/memtest_module.o /mnt/sda1/projs/memtest/memmod/memtest_module.mod.o;  true

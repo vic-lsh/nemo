@@ -1,0 +1,7 @@
+#cloud-config
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL # Allows this user to use sudo without a password
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - <SSH_PUB_KEY>

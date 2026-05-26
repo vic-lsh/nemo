@@ -1,0 +1,11 @@
+# ignore vm files
+*.qcow2
+*.img
+initrd
+vmlinuz
+*.txt
+*.iso
+*.log
+# ignored because it contains user ssh key info
+cidata/user-data
+vm*/

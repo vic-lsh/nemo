@@ -1,0 +1,3 @@
+INITRD_IMG_PATH=xxx
+VMLINUZ_PATH=xxx
+KERNEL_CMDLINE='console=ttyS0 root=/dev/vda1 rw systemd.mask=multipathd.service systemd.mask=boot-efi.mount systemd.mask=snapd.seeded.service'

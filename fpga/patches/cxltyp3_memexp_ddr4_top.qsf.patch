@@ -1,0 +1,32 @@
+diff --git a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/cxltyp3_memexp_ddr4_top.qsf b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/cxltyp3_memexp_ddr4_top.qsf
+index f4140ec4..fdc42339 100644
+--- a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/cxltyp3_memexp_ddr4_top.qsf
++++ b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/cxltyp3_memexp_ddr4_top.qsf
+@@ -102,14 +102,19 @@ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/utils/nemo_fif
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/utils/nemo_fifo_valrdy.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/utils/nemo_mc_axi_to_nemo.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/utils/nemo_nemo_to_mc_axi.sv
++set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/utils/nemo_bugfix.sv
+ 
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_controlpath_demux.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipeline_statemachine.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipeline_filter_and_flatmap.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipeline_rmw.sv
++set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipeline_translation_unit.sv
++set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipeline_combiner_and_translation.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipeline_combiner.sv
++set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipelines.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/pipeline/nemo_pipeline.sv
+ 
++set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_controlpath_translator.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_axi_ar_to_controlpath_req.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_axi_ar_to_datapath.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_axi_aw_to_datapath.sv
+@@ -121,6 +126,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_axi_to_me
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_controlpath_req_fifo.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_controlpath_req_merge.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_controlpath_resp_fifo.sv
++set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_controlpath_resp_demerge.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_controlpath_resp_to_axi.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_datapath_fifo.sv
+ set_global_assignment -name SYSTEMVERILOG_FILE common/custom/nemo/nemo_datapath_merge_2.sv

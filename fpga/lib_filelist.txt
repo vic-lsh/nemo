@@ -1,0 +1,2 @@
+$QUARTUS_ROOTDIR/eda/sim_lib/altera_primitives.v
+$QUARTUS_ROOTDIR/eda/sim_lib/altera_mf.v

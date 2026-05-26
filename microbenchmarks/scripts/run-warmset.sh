@@ -1,0 +1,22 @@
+#!/bin/sh
+
+: "${HEMEM_LIB:?HEMEM_LIB must be set to the path of libhemem.so}"
+
+./run-perf.sh >/dev/null 2>&1 &
+run_perf_pid=$!
+
+for i in `seq 31 38`; do
+  nice -20 numactl -C0,1,2,3 -m0 -- ./../src/central-manager &
+  central_pid=$!
+  sleep 5
+  workset=$((i + 1))
+  warmset=$((i))
+  echo "=== $warmset ==="
+  echo "=== $warmset ===" >> warmset-results.txt
+  numactl -N0 -m0 --physcpubind=4-22 -- env LD_PRELOAD="${HEMEM_LIB}" ./gups-warmset 16 1000000000 $workset 8 $warmset 0 /tmp/warmsweep.$i.txt >> warmset-results.txt
+  kill -9 ${central_pid}
+  sleep 5
+done
+
+kill -9 ${run_perf_pid}
+pkill perf

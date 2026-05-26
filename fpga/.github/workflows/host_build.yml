@@ -1,0 +1,21 @@
+name: Build Host-side Programs
+on:
+  push:
+    paths:
+      - 'host/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: ./host/scripts/install_deps.sh
+
+    - name: Build host-side project
+      run: |
+        cd host
+        make

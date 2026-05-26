@@ -1,0 +1,27 @@
+diff --git a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb_axilite_interface.sv b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb_axilite_interface.sv
+index bee91483..0422fa49 100644
+--- a/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb_axilite_interface.sv
++++ b/fpga/intel_rtile_cxl_top_0_ed/hardware_test_design/sim/afu_top_tb_axilite_interface.sv
+@@ -4,7 +4,7 @@ import mc_axi_if_pkg::t_to_mc_axi4;
+ import mc_axi_if_pkg::t_from_mc_axi4;
+ 
+ module afu_top_tb_axilite_interface #(
+-  parameter MEM_TOP_ADDR = 1024
++  parameter MEM_TOP_ADDR = 4096
+ ) (
+   input clk,
+   input rst,
+@@ -94,6 +94,13 @@ always @(posedge slow_clk) begin
+             telem_write_req_cnt <= cnt_slow;
+         end
+         cnt_slow <= cnt_slow + 1;
++
++        if (telem_write_req_addr[2:0] != 0 && telem_write_req_valid) begin
++          $fatal(2, "Telem write req addr must be multiple of 8.");
++        end
++        if (telem_read_req_addr[2:0] != 0 && telem_read_req_valid) begin
++          $fatal(2, "Telem read req addr must be multiple of 8.");
++        end
+     end
+ end
+ 

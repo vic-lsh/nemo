@@ -1,0 +1,10 @@
+#pragma once
+
+#include "ucm-config.h"
+
+#define PEBS_COOLING_THRESHOLD (1 << NUM_HOTNESS_LEVELS)
+#ifdef CONFIG_CXL_TELEM
+#define CXL_COOLING_THRESHOLD (PEBS_COOLING_THRESHOLD * 1024)
+#else
+#define CXL_COOLING_THRESHOLD (PEBS_COOLING_THRESHOLD)
+#endif
